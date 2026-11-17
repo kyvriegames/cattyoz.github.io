@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7ff"><meta name="description" content="CattyOS student learning workspace">
+<title>CattyOS — Your school, organized.</title>
+<style>
+:root{--bg:#f5f7fc;--panel:#fff;--ink:#18243b;--muted:#77839a;--line:#e8edf5;--blue:#426cf5;--blue2:#edf1ff;--shadow:0 16px 45px #23385c0b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#e9edff 0,transparent 36%),var(--bg);color:var(--ink);font:15px/1.55 Inter,"SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.12px}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+.sidebar{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:11px;padding:0 9px}.logo{width:39px;height:39px;border-radius:13px;background:linear-gradient(145deg,#4c91ff,#2862e9);display:grid;place-items:center;color:white;font-size:21px;box-shadow:0 7px 18px #3978f640}.brand strong{font-size:19px;letter-spacing:-.6px}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:-3px}
+.navlabel{font-size:10px;font-weight:800;color:#9aa6b9;letter-spacing:1.2px;padding:0 11px;margin-bottom:-12px}.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;background:transparent;color:#62718a;text-align:left;font-weight:650}.nav button.active,.nav button:hover{background:var(--blue2);color:var(--blue)}.nav .ico{width:20px;text-align:center;font-size:17px}.sidebottom{margin-top:auto;background:#f5f8ff;border:1px solid var(--line);padding:13px;border-radius:14px}.sidebottom b{font-size:13px}.sidebottom p{font-size:12px;color:var(--muted);margin:4px 0 0}
+main{min-width:0;padding:26px clamp(16px,3vw,42px) 50px;max-width:1500px;width:100%;margin:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:27px}.crumb{color:var(--muted);font-size:13px}.topright{display:flex;align-items:center;gap:12px}.clock{text-align:right;font-variant-numeric:tabular-nums}.clock strong{display:block;font-size:15px}.clock small{color:var(--muted);font-size:11px}.avatar{width:38px;height:38px;border-radius:50%;background:#e5edff;color:#316be6;display:grid;place-items:center;font-weight:800}
+h1{font-size:clamp(26px,3vw,36px);letter-spacing:-1.2px;line-height:1.15;margin:0 0 8px}.sub{color:var(--muted);margin:0}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:23px}.gradepick{background:#fff;border:1px solid var(--line);padding:10px 13px;border-radius:11px;color:var(--ink);min-width:150px;outline:none}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:22px}.stat,.panel,.welcome{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}.stat{padding:16px}.stat .sicon{width:34px;height:34px;border-radius:11px;background:var(--blue2);display:grid;place-items:center;margin-bottom:10px}.stat strong{font-size:23px;display:block;letter-spacing:-.6px}.stat span{color:var(--muted);font-size:12px}
+.welcome{padding:22px;background:linear-gradient(115deg,#eaf2ff,#f8faff 70%);display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;overflow:hidden}.welcome h2{margin:0 0 5px;font-size:20px}.welcome p{margin:0;color:#647692;font-size:13px}.welcome .cat{font-size:50px;opacity:.9}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:25px 0 12px}.sectionhead h2{font-size:18px;margin:0;letter-spacing:-.4px}.sectionhead small{color:var(--muted)}
+.quickgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.quick{padding:16px;border-radius:15px;border:1px solid var(--line);background:#fff;text-align:left;color:var(--ink);transition:.15s}.quick:hover,.subject:hover{transform:translateY(-2px);box-shadow:0 10px 24px #1b37620e;border-color:#cbdafa}.quick .qicon{font-size:21px;margin-bottom:8px}.quick b{display:block}.quick span{color:var(--muted);font-size:12px}
+.subjectgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.subject{border:1px solid var(--line);background:linear-gradient(160deg,#fff,#fbfcff);padding:16px;border-radius:17px;text-align:left;color:var(--ink);transition:.15s;min-width:0}.subject .subicon{font-size:20px;margin-bottom:8px}.subject b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subject small{color:var(--muted);font-size:11px}
+.panel{padding:18px}.searchrow{display:flex;gap:10px;margin:15px 0}.searchrow input{flex:1;min-width:0;padding:11px 13px;border:1px solid var(--line);border-radius:10px;outline:none;background:#fbfcff}.searchrow input:focus,textarea:focus{border-color:#8db1ff}.primary{background:linear-gradient(135deg,#557bff,#3d5fe9);color:white;padding:10px 15px;border-radius:11px;box-shadow:0 7px 16px #426cf52b;font-weight:700}.secondary{background:var(--blue2);color:var(--blue);padding:9px 13px;border-radius:10px;font-weight:700}
+.page{display:none}.page.active{display:block}.listrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.listrow:last-child{border:0}.listrow b{font-size:13px}.listrow small{display:block;color:var(--muted)}.pill{font-size:11px;background:#eef4ff;color:#3978f6;padding:5px 9px;border-radius:20px;white-space:nowrap}
+.lesson{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff;margin-top:12px}.lesson h3{margin:0 0 5px}.lesson p{color:var(--muted);margin:0 0 12px;font-size:13px}.lesson textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:10px;padding:12px;resize:vertical;outline:none}
+.empty{padding:30px;text-align:center;color:var(--muted)}.mobilemenu{display:none;background:white;border:1px solid var(--line);border-radius:10px;padding:8px 11px}
+footer{color:#9aa6b9;font-size:11px;text-align:center;margin-top:35px}
+@media(max-width:1000px){.subjectgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.app{display:block}.sidebar{position:fixed;z-index:10;left:-270px;top:0;width:250px;transition:.22s;box-shadow:15px 0 35px #17243b22}.sidebar.open{left:0}.mobilemenu{display:block}.topbar{margin-bottom:21px}.hero{align-items:flex-start;flex-direction:column}.gradepick{width:100%}.quickgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.subjectgrid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:17px 15px 40px}.welcome{padding:17px}.welcome .cat{font-size:38px}.clock strong{font-size:13px}}
+@media(max-width:380px){.stats{gap:8px}.stat{padding:12px}.subjectgrid{gap:8px}.subject{padding:12px}}
+
+.online-pill{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:7px 11px;font-size:11px;color:#66738b;font-weight:700;white-space:nowrap}
+.live-dot{width:7px;height:7px;background:#2bc48a;border-radius:50%;box-shadow:0 0 0 4px #2bc48a1c;display:inline-block}
+.feature-strip{display:grid;grid-template-columns:1fr 1.35fr;gap:13px;margin:0 0 22px}
+.focus-card,.quote-card{border:1px solid var(--line);border-radius:19px;padding:18px;background:#fff;box-shadow:var(--shadow)}
+.focus-card{background:linear-gradient(135deg,#202d55,#354a83);color:#fff}
+.focus-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1.1px;font-weight:800;color:#d9e2ff}
+.focus-tag{background:#ffffff20;border-radius:30px;padding:5px 8px;letter-spacing:0}
+.focus-time{font-size:39px;font-weight:800;letter-spacing:-2px;margin:7px 0 5px;font-variant-numeric:tabular-nums}
+.focus-actions{display:flex;gap:7px}.focus-actions .primary{background:#fff;color:#334a89;box-shadow:none;padding:7px 12px;font-size:12px}.focus-actions .secondary{background:#ffffff1c;color:#fff;padding:7px 12px;font-size:12px}
+.focus-card p{font-size:11px;color:#d5ddf6;margin:9px 0 0}
+.quote-card{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#fff,#f3f1ff);position:relative;overflow:hidden}
+.quote-mark{font-size:52px;line-height:1;color:#a9a4f2;font-family:Georgia,serif}.quote-card b{font-size:16px;letter-spacing:-.3px}.quote-card p{font-size:11px;color:var(--muted);margin:5px 0 0}.quote-cat{font-size:34px;margin-left:auto;align-self:flex-end}
+.welcome-overlay{position:fixed;inset:0;background:rgba(20,31,57,.52);backdrop-filter:blur(13px);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.welcome-overlay.show{display:flex}
+.welcome-modal{width:min(100%,470px);background:#fff;border:1px solid #ffffff80;border-radius:27px;padding:36px;box-shadow:0 30px 100px #111d3a55;animation:gateIn .35s ease}
+@keyframes gateIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.gate-mark{width:55px;height:55px;display:grid;place-items:center;border-radius:19px;background:linear-gradient(145deg,#eaf0ff,#f1edff);font-size:28px;margin-bottom:23px}
+.gate-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:850;color:#637be5;margin-bottom:10px}
+.welcome-modal h1{font-size:34px;letter-spacing:-1.5px;line-height:1.1;margin:0 0 12px}.welcome-modal h1 span{color:#5874ef}
+.welcome-modal p{color:var(--muted);font-size:14px;margin:0 0 22px}
+.welcome-modal form{display:flex;gap:8px}.welcome-modal input{min-width:0;flex:1;border:1px solid var(--line);border-radius:12px;padding:13px;outline:none}.welcome-modal input:focus{border-color:#8ba3ff;box-shadow:0 0 0 3px #557bff18}.welcome-modal small{display:block;color:#9aa5b8;font-size:11px;margin-top:14px}
+.rotation-note{display:flex;align-items:center;gap:8px;color:#71809a;font-size:12px;margin:10px 0 14px}.rotation-note span{width:7px;height:7px;border-radius:50%;background:#37c996}
+.activity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.activity-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.activity-card .activity-number{font-size:10px;letter-spacing:1px;color:#7b8bb0;font-weight:800}
+.activity-card h3{font-size:14px;margin:5px 0}.activity-card p{font-size:12px;color:var(--muted);margin:0 0 12px}
+.activity-card textarea{width:100%;min-height:76px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical;font:inherit;font-size:12px;outline:none}
+.activity-card .activity-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.activity-card .activity-actions small{font-size:10px;color:#9aa5b8}
+.activity-card .activity-actions button{font-size:11px;padding:6px 9px}
+@media(max-width:720px){.feature-strip{grid-template-columns:1fr}.activity-grid{grid-template-columns:1fr}.welcome-modal{padding:27px 22px}.welcome-modal h1{font-size:29px}.welcome-modal form{flex-direction:column}.welcome-modal form button{width:100%}.online-pill{padding:6px 8px}}
+
+
+/* Blue notebook edition */
+:root{--bg:#f3f8ff;--ink:#14335b;--muted:#587294;--line:#dce8f8;--blue:#2162df;--blue2:#eaf2ff;--shadow:0 8px 30px #204a8b08}
+body{background-color:var(--bg);background-image:radial-gradient(#8eb6ed70 1.15px,transparent 1.15px);background-size:19px 19px}
+.sidebar{background:#ffffffef;border-right:1px solid #cfdef3;gap:20px}.brand strong{color:#164caa}.brand small{letter-spacing:.3px}.logo{background:#2364dc}
+main{max-width:1530px}.panel,.stat,.subject,.quick,.activity-card{border-color:#d7e5f8;box-shadow:var(--shadow)}
+h1{letter-spacing:-1.4px;color:#143b77}.primary{background:#2463de;box-shadow:0 4px 0 #184eb7;transition:transform .15s}.primary:hover{background:#1856cc;transform:translateY(-1px)}.secondary:hover{background:#dbeaff}
+.welcome{background-color:#e6f0ff;background-image:radial-gradient(#90b4ec80 1px,transparent 1px);background-size:15px 15px;border:1px solid #bfd6f7}.welcome h2{font-size:25px;color:#184b9a}
+.quote-card{background:#fff}.quote-mark{color:#88afea}.focus-card{background:#1e53ad}.welcome-modal h1 span{color:#2364dc}.gate-mark{background:#eaf2ff}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;color:#3269b5;text-transform:uppercase;margin:0 0 10px}.study-banner{border:1px solid #b8d2f7;border-radius:24px;padding:30px;background:#e9f2ff;background-image:radial-gradient(#98bceb80 1.3px,transparent 1.3px);background-size:20px 20px;display:flex;gap:22px;align-items:center;justify-content:space-between;margin-bottom:24px}.study-banner h2{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-1px}.study-banner p{margin:0;color:#42648d;max-width:550px}.study-banner .primary{white-space:nowrap}
+.study-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}.decklist{display:grid;gap:9px}.deckbtn{text-align:left;border:1px solid var(--line);border-radius:14px;padding:16px;background:white;color:var(--ink)}.deckbtn.active{background:#e7f0ff;border-color:#6097e9;box-shadow:inset 3px 0 #2463de}.deckbtn b{display:block;margin:4px 0}.deckbtn small{color:var(--muted);font-size:11px}.deck-num{font-size:10px;letter-spacing:1px;color:#5380bc}.study-content{min-width:0}.tabs{display:flex;gap:6px;padding:5px;background:#e3edfb;border-radius:13px;margin-bottom:18px}.tabs button{flex:1;padding:10px;border-radius:9px;background:transparent;color:#48678e;font-weight:650}.tabs button.active{background:#fff;color:#1c56b8;box-shadow:0 2px 6px #1e4c8210}.study-note{font-size:12px;color:var(--muted);margin:14px 0}.lessonblock{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:13px}.lessonblock h3{margin:5px 0 12px;font-size:19px}.lessonblock p{margin:8px 0;color:#476183}.answer-chip{display:inline-block;padding:7px 12px;background:#edf4ff;border-radius:9px;color:#1b54aa;font-weight:750;margin:5px 0}.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.study-check{display:flex;gap:9px;align-items:center;font-size:13px;color:#385b86;margin-top:18px}.study-check input{accent-color:#2463de;width:17px;height:17px}
+.flashcard{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;min-height:285px;border:1px solid #b7cff1;border-radius:23px;padding:32px;background:#fff;color:#173e76;box-shadow:0 12px 30px #1f539b0a}.flashcard:hover{border-color:#568fe1}.flashcard .fc-text{font-size:26px;font-weight:700;line-height:1.4;max-width:600px;margin:22px 0}.flashcard small{color:#5d7da5}.flashcard.flipped{background:#eaf3ff}.cardbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:17px 0}.meter{height:7px;background:#e1ecfa;border-radius:20px;overflow:hidden;margin:15px 0}.meter>span{display:block;height:100%;background:#3575df;transition:width .2s}.muted{color:var(--muted);font-size:13px}.test-config{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}.field{display:grid;gap:7px;font-size:13px;font-weight:650}.field select,.field input,.field textarea{padding:12px;border:1px solid #c9dcf5;border-radius:10px;background:#fff;color:var(--ink);width:100%;min-width:0}.quiz-option{display:flex;align-items:center;gap:13px;text-align:left;width:100%;padding:16px;border:1px solid #cdddf2;background:#fff;border-radius:12px;margin:10px 0;color:var(--ink)}.quiz-option:hover{background:#f1f6ff;border-color:#7ea7e2}.quiz-option.selected{background:#e7f0ff;border:2px solid #3574d8;padding:15px}.quiz-option .letter{display:grid;place-items:center;width:29px;height:29px;border-radius:8px;background:#edf3fc;color:#3263a8;font-weight:700;flex-shrink:0}.quiz-option:disabled{cursor:default;opacity:1}.feedback{background:#edf4ff;border-left:3px solid #3979d9;padding:16px;border-radius:9px;margin:16px 0}.feedback h3{margin:0 0 6px;font-size:15px}.feedback p{margin:5px 0;font-size:14px}.result-score{font-size:64px;line-height:1.1;font-weight:800;color:#235db9;letter-spacing:-3px;margin:15px 0}.result-top{text-align:center;padding:18px}.review-item{padding:18px 0;border-top:1px solid var(--line)}.review-item h3{font-size:15px;margin:0 0 7px}.review-item p{margin:5px 0;font-size:13px}.statuslabel{font-size:10px;letter-spacing:1px;color:#3165ad;font-weight:800}.history-row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.history-row small{display:block;color:var(--muted)}.empty-state{text-align:center;padding:30px;color:var(--muted)}.custom-editor textarea{min-height:170px;resize:vertical}.custom-editor{display:grid;gap:15px}.notice{color:#43638b;background:#f0f6ff;border:1px dashed #a8c5ed;border-radius:12px;padding:13px;font-size:12px;margin:14px 0}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #4b8be2;outline-offset:3px}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#153d77;color:white;border-radius:12px;padding:12px 22px;z-index:100;box-shadow:0 7px 25px #153d7730}.online-pill{display:none}
+@media(min-width:1100px){.sidebar{width:250px}.study-layout .decklist{position:sticky;top:20px}}
+@media(max-width:900px){.study-layout{grid-template-columns:1fr}.decklist{grid-template-columns:repeat(2,minmax(0,1fr))}.study-banner{padding:23px}.study-banner h2{font-size:25px}}
+@media(max-width:550px){.study-banner{display:block}.study-banner .primary{margin-top:20px}.test-config{grid-template-columns:1fr}.flashcard{padding:22px;min-height:260px}.flashcard .fc-text{font-size:22px}.tabs button{font-size:12px;padding:10px 5px}.deckbtn{padding:12px}.cardbar .secondary{padding:8px;font-size:12px}.searchrow{flex-wrap:wrap}.hero h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+</head>
+<body>
+
+<div class="welcome-overlay" id="nameGate" aria-modal="true" role="dialog" aria-labelledby="gateTitle">
+ <div class="welcome-modal">
+  <div class="gate-mark">🐱</div><div class="gate-eyebrow">WELCOME TO YOUR LEARNING SPACE</div>
+  <h1 id="gateTitle">First things first.<br><span>What's your name?</span></h1>
+  <p>Let's personalize CattyOS before you jump into your classes.</p>
+  <form id="nameGateForm"><input id="firstName" autocomplete="given-name" maxlength="32" placeholder="Enter your name…" required autofocus><button class="primary" type="submit">Let's go →</button></form>
+  <small>You can change this anytime in Settings.</small>
+ </div>
+</div>
+
+<div class="app">
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo">🐱</div><div><strong>CattyOS</strong><small>your school, organized</small></div></div>
+ <div class="navlabel">WORKSPACE</div>
+ <nav class="nav"><button data-page="studyHub"><span class="ico">▤</span>Study room<span class="pill" style="margin-left:auto">NEW</span></button><button data-page="testHub"><span class="ico">✓</span>Self-tests</button><button data-page="studyHistory"><span class="ico">↗</span>Study progress</button>
+  <button class="active" data-page="home"><span class="ico">⌂</span>Dashboard</button>
+  <button data-page="classes"><span class="ico">▦</span>My classes</button>
+  <button data-page="assignments"><span class="ico">☑</span>Assignments</button>
+  <button data-page="notes"><span class="ico">▤</span>Notes</button>
+  <button data-page="calendar"><span class="ico">▦</span>Calendar</button>
+ </nav>
+ <div class="navlabel">PERSONAL</div>
+ <nav class="nav">
+  <button data-page="progress"><span class="ico">◷</span>My progress</button>
+  <button data-page="settings"><span class="ico">⚙</span>Settings</button>
+ </nav>
+ <div class="sidebottom"><b>🐾 Keep learning!</b><p>Your CattyOS workspace is ready whenever you are.</p></div>
+</aside>
+<main>
+ <div class="topbar">
+  <div style="display:flex;align-items:center;gap:10px"><button class="mobilemenu" id="menuBtn">☰</button><div class="crumb">CattyOS <span style="color:#c1cada">/</span> <span id="crumb">Dashboard</span></div></div>
+  <div class="topright"><div class="online-pill"><span class="live-dot"></span><span id="onlineCount">1</span> here</div><div class="clock"><strong id="time">--:--:--</strong><small id="date">Loading date…</small></div><div class="avatar" id="avatar">S</div></div>
+ </div>
+
+ <section class="page active" id="home">
+  <div class="hero"><div><h1 id="greeting">Welcome to CattyOS!</h1><p class="sub">A calmer place to learn, plan, and keep track of school.</p></div><select class="gradepick" id="gradeSelect" aria-label="Choose grade"></select></div>
+  <div class="stats">
+   <div class="stat"><div class="sicon">📚</div><strong id="subjectCount">20</strong><span>Subjects available</span></div>
+   <div class="stat"><div class="sicon">☑️</div><strong id="taskCount">0</strong><span>Assignments saved</span></div>
+   <div class="stat"><div class="sicon">📝</div><strong id="noteCount">0</strong><span>Notes saved</span></div>
+   <div class="stat"><div class="sicon">🎓</div><strong id="gradeLabel">K</strong><span>Your selected grade</span></div>
+  </div>
+  <div class="welcome"><div><h2>Your next breakthrough starts here.</h2><p>Open the Study room for lessons and flashcards, then check your understanding with a self-test.</p></div><div class="cat">🐈</div></div>
+  <div class="feature-strip">
+   <div class="focus-card"><div class="focus-top"><span>✦ FOCUS ROOM</span><span class="focus-tag">Study sprint</span></div><div class="focus-time" id="focusTime">25:00</div><div class="focus-actions"><button class="primary" id="focusStart">Start focus</button><button class="secondary" id="focusReset">Reset</button></div><p>One task at a time. You've got this.</p></div>
+   <div class="quote-card"><div class="quote-mark">“</div><div><b id="dailyQuote">Small steps still move you forward.</b><p>Your daily reminder from CattyOS</p></div><span class="quote-cat">🐾</span></div>
+  </div>
+  <div class="sectionhead"><h2>Quick access</h2><small>Jump back in</small></div>
+  <div class="quickgrid"><button class="quick" data-go="studyHub"><div class="qicon">▤</div><b>Study room</b><span>Real lessons, flashcards & your own sets</span></button><button class="quick" data-go="testHub"><div class="qicon">✓</div><b>Test yourself</b><span>Scored quizzes with answer explanations</span></button><button class="quick" data-go="studyHistory"><div class="qicon">↗</div><b>Learning progress</b><span>Track scores and study milestones</span></button>
+   <button class="quick" data-go="classes"><div class="qicon">📘</div><b>Explore classes</b><span>Browse your grade's subjects</span></button>
+   <button class="quick" data-go="assignments"><div class="qicon">☑️</div><b>Assignments</b><span>Keep track of schoolwork</span></button>
+   <button class="quick" data-go="notes"><div class="qicon">📝</div><b>My notes</b><span>Write and save your ideas</span></button>
+  </div>
+  <div class="sectionhead"><h2>Your subjects</h2><small id="subjectCaption">Grade K · 20 subjects</small></div>
+  <div class="subjectgrid" id="homeSubjects"></div>
+ </section>
+
+ <section class="page" id="classes">
+  <div class="hero"><div><h1>My classes</h1><p class="sub">Explore all 20 subjects in your selected grade.</p></div><select class="gradepick gradeSync" aria-label="Choose grade"></select></div>
+  <div class="searchrow"><input id="subjectSearch" placeholder="Search subjects…" aria-label="Search subjects"></div>
+  <div class="subjectgrid" id="allSubjects"></div>
+ </section>
+
+ <section class="page" id="subjectDetail">
+  <button class="secondary" id="backClasses">← All classes</button>
+  <div class="hero" style="margin-top:20px"><div><h1 id="detailTitle">Subject</h1><p class="sub" id="detailSubtitle">Your class workspace</p></div></div>
+  <div class="panel"><h2 style="font-size:17px;margin:0 0 6px">Class overview</h2><p class="sub" id="detailDescription">Explore the topic and keep your work together.</p></div>
+  <div class="sectionhead"><h2>Today's learning set</h2><small id="rotationLabel">10 activities</small></div>
+  <div class="rotation-note"><span></span><b>Fresh set every hour</b> · Activities rotate automatically, all day, every day.</div>
+  <div class="activity-grid" id="activities"></div>
+ </section>
+
+ <section class="page" id="assignments">
+  <div class="hero"><div><h1>Assignments</h1><p class="sub">Add tasks, set due dates, and check them off.</p></div></div>
+  <div class="panel">
+   <form id="taskForm" class="searchrow"><input id="taskInput" placeholder="What do you need to do?" required><input id="taskDue" type="date" style="max-width:150px"><button class="primary">Add task</button></form>
+   <div id="taskList"></div>
+  </div>
+ </section>
+
+ <section class="page" id="notes">
+  <div class="hero"><div><h1>My notes</h1><p class="sub">A simple place for thoughts, reminders, and class notes.</p></div></div>
+  <div class="panel"><input id="noteTitle" placeholder="Note title" style="width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px"><textarea id="noteBody" placeholder="Start writing…" style="width:100%;min-height:180px;padding:12px;border:1px solid var(--line);border-radius:10px;resize:vertical"></textarea><div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="primary" id="saveNote">Save note</button></div></div>
+  <div class="sectionhead"><h2>Saved notes</h2></div><div class="panel" id="noteList"></div>
+ </section>
+
+ <section class="page" id="calendar">
+  <div class="hero"><div><h1>Calendar</h1><p class="sub">Your upcoming school tasks in one place.</p></div></div>
+  <div class="panel"><h2 id="calendarToday" style="margin-top:0"></h2><p class="sub">Upcoming assignments</p><div id="calendarList"></div></div>
+ </section>
+
+ <section class="page" id="progress">
+  <div class="hero"><div><h1>My progress</h1><p class="sub">A snapshot of the work you've saved in CattyOS.</p></div></div>
+  <div class="stats"><div class="stat"><div class="sicon">☑️</div><strong id="doneCount">0</strong><span>Completed tasks</span></div><div class="stat"><div class="sicon">📌</div><strong id="pendingCount">0</strong><span>Tasks to do</span></div><div class="stat"><div class="sicon">📝</div><strong id="progressNotes">0</strong><span>Saved notes</span></div><div class="stat"><div class="sicon">📚</div><strong id="progressSubjects">20</strong><span>Available subjects</span></div></div>
+  <div class="panel"><h2 style="margin-top:0;font-size:17px">Your activity</h2><p class="sub">Your assignments and notes are stored on this device in this browser.</p></div>
+ </section>
+
+ <section class="page" id="settings">
+  <div class="hero"><div><h1>Settings</h1><p class="sub">Make CattyOS feel like your workspace.</p></div></div>
+  <div class="panel">
+   <label style="display:block;font-weight:700;margin-bottom:7px">Your display name</label><div class="searchrow"><input id="nameInput" placeholder="Student name"><button class="primary" id="saveName">Save</button></div>
+   <label style="display:block;font-weight:700;margin:15px 0 7px">Default grade</label><select id="settingsGrade" class="gradepick gradeSync"></select>
+   <p class="sub" style="margin-top:15px">CattyOS saves your notes, assignments, and preferences in this browser using local storage.</p>
+  </div>
+ </section>
+
+<section class="page" id="studyHub">
+ <div class="hero"><div><div class="eyebrow">Your learning notebook</div><h1>Study a little. Understand a lot.</h1><p class="sub">Read the lesson, recall it with flashcards, then test what stuck.</p></div><button class="secondary" id="createDeckGo">+ Create a study set</button></div>
+ <div class="study-banner"><div><div class="eyebrow">A simple study routine</div><h2>Learn it. Recall it. Prove it.</h2><p>Dedicated lessons and flashcards, with self-tests that explain every answer. Start with a sample set or build one from your own class notes.</p></div><button class="primary" id="studyTestGo">Take a self-test →</button></div>
+ <div class="study-layout"><div><div class="sectionhead" style="margin-top:0"><h2>Study sets</h2><small id="deckCount"></small></div><div id="deckList" class="decklist"></div><p class="study-note">Sample sets are introductory examples, not a complete or grade-aligned curriculum. Your own sets can cover any class.</p></div><div class="study-content"><div id="studyHeading"></div><div class="tabs" role="tablist" aria-label="Study method"><button role="tab" id="learnTab">Study guide</button><button role="tab" id="flashTab">Flashcards</button><button role="tab" id="makeTab">Create a set</button></div><div id="studyBody"></div></div></div>
+</section>
+<section class="page" id="testHub"><div class="hero"><div><div class="eyebrow">The self-test studio</div><h1>Find out what you know.</h1><p class="sub">No pressure. Just useful feedback and a clearer next step.</p></div><button class="secondary" id="backStudy">← Back to studying</button></div><div id="testBody"></div></section>
+<section class="page" id="studyHistory"><div class="hero"><div><div class="eyebrow">Your learning story</div><h1>Study progress</h1><p class="sub">Your completed self-tests and learning milestones, on this browser.</p></div><button class="secondary" id="historyTestGo">New self-test →</button></div><div id="learningStats" class="stats"></div><div class="panel"><div class="sectionhead" style="margin-top:0"><h2>Test history</h2><button class="secondary" id="exportStudy">Export study data</button></div><div id="testHistory"></div></div><div class="notice">Scores measure performance on these questions, not mastery of an entire subject. Browser data can be cleared; export a backup to keep a copy.</div></section>
+
+ <footer>CattyOS • Made for curious minds 🐾</footer>
+</main>
+</div>
+<script>
+const subjectNames=[
+["Reading","Writing","Math","Science","Social Studies","Art","Music","Physical Education","Health","Technology","Phonics","Story Time","Numbers","Shapes","Nature Studies","Handwriting","Creative Play","Community Helpers","World Around Us","Problem Solving"],
+["Reading","Writing","Math","Science","Social Studies","Art","Music","Physical Education","Health","Technology","Phonics","Spelling","Grammar","Geography","History","Library Skills","Computer Skills","Creative Writing","Life Skills","Problem Solving"],
+["Reading","Writing","Math","Science","Social Studies","Art","Music","Physical Education","Health","Technology","Spelling","Grammar","Vocabulary","Geography","History","Library Skills","Computer Skills","Creative Writing","Civics","Problem Solving"],
+["Reading","Writing","Math","Science","Social Studies","Art","Music","Physical Education","Health","Technology","Spelling","Grammar","Vocabulary","Geography","History","Research Skills","Computer Science","Creative Writing","Civics","Problem Solving"],
+["English Language Arts","Mathematics","Life Science","Earth Science","Social Studies","World History","Geography","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Grammar","Civics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Mathematics","Life Science","Earth Science","Social Studies","World History","Geography","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Grammar","Civics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Mathematics","Life Science","Earth Science","Social Studies","World History","Geography","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Grammar","Civics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Pre-Algebra","Life Science","Physical Science","Social Studies","World History","Geography","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Grammar","Civics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Algebra I","Biology","Physical Science","U.S. History","World History","Geography","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Environmental Science","Civics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Geometry","Biology","Chemistry","U.S. History","World History","Geography","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Environmental Science","Civics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Algebra II","Chemistry","Physics","U.S. History","World History","Government","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Environmental Science","Economics","Research Skills","Financial Literacy","Design"],
+["English Language Arts","Precalculus","Physics","Chemistry","U.S. History","World History","Government","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Environmental Science","Economics","Research Skills","Financial Literacy","Career Studies"],
+["English Language Arts","Calculus","Physics","Biology","Government","Economics","World History","Art","Music","Physical Education","Health","Technology","Computer Science","Spanish","Creative Writing","Environmental Science","Statistics","Research Seminar","Financial Literacy","Career Studies"]
+];
+const grades=["Kindergarten","1st Grade","2nd Grade","3rd Grade","4th Grade","5th Grade","6th Grade","7th Grade","8th Grade","9th Grade","10th Grade","11th Grade","12th Grade"];
+const icons=["📖","✏️","🔢","🔬","🌎","🎨","🎵","⚽","💚","💻","🧩","📚","🗣️","🗺️","🏛️","🔎","🖥️","📝","⚖️","💡"];
+const descriptions=["Build reading confidence and explore stories, sounds, and new words.","Practice clear writing, communication, and creative expression.","Explore number sense, patterns, and mathematical thinking.","Ask questions, investigate ideas, and understand the natural world.","Learn about people, places, communities, and how the world works.","Explore creativity through visual projects and artistic ideas.","Discover rhythm, sound, listening, and musical expression.","Explore movement, teamwork, coordination, and healthy activity.","Learn about wellbeing, healthy choices, and everyday life skills.","Build digital awareness and learn how technology works."];
+let grade=Number(localStorage.getItem("catty_grade")||0), student=localStorage.getItem("catty_name")||"Student";
+let tasks=JSON.parse(localStorage.getItem("catty_tasks")||"[]"),notes=JSON.parse(localStorage.getItem("catty_notes")||"[]");
+const $=id=>document.getElementById(id);
+function gradeText(){return grade===0?"Kindergarten":grades[grade]}
+function subjects(){return subjectNames[grade]}
+function save(){localStorage.setItem("catty_grade",grade);localStorage.setItem("catty_name",student);localStorage.setItem("catty_tasks",JSON.stringify(tasks));localStorage.setItem("catty_notes",JSON.stringify(notes))}
+function fillGrades(){document.querySelectorAll(".gradepick,.gradeSync").forEach(s=>{s.innerHTML=grades.map((g,i)=>`<option value="${i}">${g}</option>`).join("");s.value=grade})}
+function updateClock(){let d=new Date();$("time").textContent=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit",second:"2-digit"});$("date").textContent=d.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric",year:"numeric"});$("calendarToday").textContent=d.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric",year:"numeric"});$("greeting").textContent=(d.getHours()<12?"Good morning":d.getHours()<18?"Good afternoon":"Good evening")+", "+student+"!"}
+function subjectCard(name,i){return `<button class="subject" data-subject="${i}"><div class="subicon">${icons[i%icons.length]}</div><b>${name}</b><small>Grade ${grade===0?"K":grade} · Open class →</small></button>`}
+function renderSubjects(){let list=subjects();$("subjectCount").textContent=list.length;$("gradeLabel").textContent=grade===0?"K":grade;$("subjectCaption").textContent=`${gradeText()} · ${list.length} subjects`;$("homeSubjects").innerHTML=list.slice(0,8).map(subjectCard).join("");$("allSubjects").innerHTML=list.map(subjectCard).join("");$("progressSubjects").textContent=list.length;document.querySelectorAll(".gradepick,.gradeSync").forEach(s=>s.value=grade)}
+function renderTasks(){let open=tasks.filter(t=>!t.done).length;$("taskCount").textContent=tasks.length;$("doneCount").textContent=tasks.length-open;$("pendingCount").textContent=open;$("taskList").innerHTML=tasks.length?tasks.map((t,i)=>`<div class="listrow"><div><b style="${t.done?'text-decoration:line-through;color:#9aa6b9':''}">${escapeHtml(t.title)}</b><small>${t.due?"Due "+new Date(t.due+"T12:00:00").toLocaleDateString():"No due date"}</small></div><div style="display:flex;gap:7px"><button class="secondary" data-toggle="${i}">${t.done?"Undo":"Done"}</button><button class="secondary" data-delete="${i}" aria-label="Delete task">×</button></div></div>`).join(""):`<div class="empty">No assignments yet. Add your first task above.</div>`;$("calendarList").innerHTML=tasks.filter(t=>!t.done).sort((a,b)=>(a.due||"9999").localeCompare(b.due||"9999")).map(t=>`<div class="listrow"><div><b>${escapeHtml(t.title)}</b><small>${t.due?"Due "+new Date(t.due+"T12:00:00").toLocaleDateString():"No due date"}</small></div><span class="pill">To do</span></div>`).join("")||`<div class="empty">Nothing coming up. You're all caught up!</div>`}
+function renderNotes(){$("noteCount").textContent=notes.length;$("progressNotes").textContent=notes.length;$("noteList").innerHTML=notes.length?notes.map((n,i)=>`<div class="listrow"><div><b>${escapeHtml(n.title||"Untitled note")}</b><small>${escapeHtml(n.body).slice(0,100)}</small></div><button class="secondary" data-note-delete="${i}">Delete</button></div>`).join(""):`<div class="empty">Your saved notes will appear here.</div>`}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function openPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$(id).classList.add("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));$("crumb").textContent=({home:"Dashboard",classes:"My classes",assignments:"Assignments",notes:"Notes",calendar:"Calendar",progress:"My progress",settings:"Settings",subjectDetail:"Classroom"})[id]||"CattyOS";$("sidebar").classList.remove("open");window.scrollTo(0,0)}
+function openSubject(i){let name=subjects()[i];$("detailTitle").textContent=name;$("detailSubtitle").textContent=`${gradeText()} · Subject ${i+1} of 20`;$("detailDescription").textContent=descriptions[i%descriptions.length];$("activities").innerHTML=[["Warm-up","Write or think of three things you already know about "+name+"."],["Explore","Choose one question about "+name+ " that you would like to investigate."],["Reflection","Write a short summary of one new thing you learned."]].map((a,j)=>`<div class="lesson"><h3>${j+1}. ${a[0]}</h3><p>${a[1]}</p><textarea placeholder="Your response…"></textarea></div>`).join("");openPage("subjectDetail")}
+document.addEventListener("click",e=>{let nav=e.target.closest("[data-page]");if(nav)openPage(nav.dataset.page);let go=e.target.closest("[data-go]");if(go)openPage(go.dataset.go);let sub=e.target.closest("[data-subject]");if(sub)openSubject(Number(sub.dataset.subject));if(e.target.id==="backClasses")openPage("classes");let toggle=e.target.closest("[data-toggle]");if(toggle){tasks[+toggle.dataset.toggle].done=!tasks[+toggle.dataset.toggle].done;save();renderTasks()}let del=e.target.closest("[data-delete]");if(del){tasks.splice(+del.dataset.delete,1);save();renderTasks()}let nd=e.target.closest("[data-note-delete]");if(nd){notes.splice(+nd.dataset.noteDelete,1);save();renderNotes()}});
+$("gradeSelect").addEventListener("change",e=>{grade=+e.target.value;save();renderSubjects()});document.querySelectorAll(".gradeSync").forEach(s=>s.addEventListener("change",e=>{grade=+e.target.value;save();renderSubjects()}));
+$("subjectSearch").addEventListener("input",e=>{let q=e.target.value.toLowerCase();$("allSubjects").innerHTML=subjects().map((n,i)=>({n,i})).filter(x=>x.n.toLowerCase().includes(q)).map(x=>subjectCard(x.n,x.i)).join("")||`<div class="empty">No subjects found.</div>`});
+$("taskForm").addEventListener("submit",e=>{e.preventDefault();let title=$("taskInput").value.trim();if(!title)return;tasks.push({title,due:$("taskDue").value,done:false});$("taskInput").value="";$("taskDue").value="";save();renderTasks()});
+$("saveNote").addEventListener("click",()=>{let title=$("noteTitle").value.trim(),body=$("noteBody").value.trim();if(!title&&!body)return;notes.unshift({title,body});$("noteTitle").value="";$("noteBody").value="";save();renderNotes()});
+$("saveName").addEventListener("click",()=>{student=$("nameInput").value.trim()||"Student";save();$("avatar").textContent=student[0].toUpperCase();updateClock()});
+$("settingsGrade").addEventListener("change",e=>{grade=+e.target.value;save();renderSubjects()});
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+fillGrades();$("nameInput").value=student;$("avatar").textContent=student[0].toUpperCase();updateClock();setInterval(updateClock,1000);renderSubjects();renderTasks();renderNotes();
+
+// Activity engine: ten distinct learning tasks are displayed for each subject.
+// The hourly seed changes automatically and cycles through the prompt bank indefinitely.
+const activityBank = [
+ ["Quick recall","Write down three facts you remember about {s}.","Recall challenge"],
+ ["Explain it simply","Explain one idea from {s} as if teaching a younger student.","Teach-back"],
+ ["Make a connection","Connect {s} to something you have seen in everyday life.","Real-world link"],
+ ["Question builder","Write two questions about {s} that you want answered.","Curiosity"],
+ ["Mini research","Find or recall one interesting example related to {s}. Summarize it.","Research"],
+ ["Compare & contrast","Compare two ideas, examples, or approaches from {s}.","Thinking skill"],
+ ["Create something","Make a mini poster, diagram, story, or list about {s}.","Creative task"],
+ ["Challenge yourself","Write one tricky question about {s}, then try to answer it.","Challenge"],
+ ["Key vocabulary","Choose five important words connected to {s} and define them.","Vocabulary"],
+ ["Exit reflection","What is one thing you understand better about {s}, and what is still confusing?","Reflection"],
+ ["Spot the pattern","Look for a pattern, rule, or repeated idea in {s}. Describe it.","Pattern finder"],
+ ["Everyday example","Invent a realistic situation where someone might use {s}.","Apply it"],
+ ["One-minute summary","Summarize a topic from {s} in just a few sentences.","Quick summary"],
+ ["Build a checklist","Create a short checklist for remembering an important {s} skill.","Study strategy"],
+ ["What if?","Change one detail in an idea from {s}. What might happen next?","Creative thinking"],
+ ["Teach with an example","Give an example that makes a concept from {s} easier to understand.","Example builder"],
+ ["Sort the ideas","Group related concepts from {s} and explain your categories.","Organization"],
+ ["Find the mistake","Invent a common mistake someone could make in {s}, then correct it.","Error analysis"],
+ ["Make a mind map","Create a text-based mind map of a topic in {s}.","Visual thinking"],
+ ["Big-picture thinking","How does {s} connect to another subject you study?","Cross-subject link"]
+];
+let activeSubjectIndex = 0;
+const hourSeed = () => Math.floor(Date.now()/3600000);
+function renderRotatedActivities(){
+ const subject=subjects()[activeSubjectIndex]||"Learning";
+ const seed=hourSeed(), start=(seed*7+activeSubjectIndex*11)%activityBank.length;
+ const chosen=Array.from({length:10},(_,i)=>activityBank[(start+i*7)%activityBank.length]);
+ $("rotationLabel").textContent="Hourly set "+(new Date().getHours()+1)+" · 10 activities";
+ $("activities").innerHTML=chosen.map((a,i)=>`<article class="activity-card"><div class="activity-number">ACTIVITY ${String(i+1).padStart(2,"0")} · ${a[2].toUpperCase()}</div><h3>${a[0]}</h3><p>${a[1].replaceAll("{s}",escapeHtml(subject))}</p><textarea aria-label="${escapeHtml(a[0])} response" placeholder="Write your answer or working here…"></textarea><div class="activity-actions"><small>Save your work on this device</small><button class="secondary" data-save-activity="${i}">Save work</button></div></article>`).join("");
+ $("activities").querySelectorAll("[data-save-activity]").forEach(btn=>btn.addEventListener("click",()=>{
+  const card=btn.closest(".activity-card"), answer=card.querySelector("textarea").value.trim();
+  if(!answer){card.querySelector("textarea").focus();return}
+  const key="catty_activity_"+grade+"_"+activeSubjectIndex+"_"+hourSeed()+"_"+btn.dataset.saveActivity;
+  localStorage.setItem(key,answer);btn.textContent="Saved ✓";btn.disabled=true;
+ }));
+}
+const baseOpenSubject=openSubject;
+openSubject=function(i){activeSubjectIndex=i;baseOpenSubject(i);renderRotatedActivities()};
+let previousHour=hourSeed();
+setInterval(()=>{if(hourSeed()!==previousHour){previousHour=hourSeed();if($("subjectDetail").classList.contains("active"))renderRotatedActivities()}},10000);
+
+// First-visit onboarding: name prompt appears before the dashboard.
+function showNameGate(){
+ if(!localStorage.getItem("catty_name") || localStorage.getItem("catty_name")==="Student"){
+  $("nameGate").classList.add("show");setTimeout(()=>$("firstName").focus(),150);
+ }
+}
+$("nameGateForm").addEventListener("submit",e=>{
+ e.preventDefault();const name=$("firstName").value.trim().replace(/\s+/g," ").slice(0,32);if(!name)return;
+ student=name;save();$("avatar").textContent=name[0].toUpperCase();$("nameInput").value=name;$("nameGate").classList.remove("show");updateClock();
+});
+
+// Local live presence indicator. Counts CattyOS tabs/windows in this browser.
+// A real all-visitors website count requires a hosted realtime presence backend.
+const presence=("BroadcastChannel" in window)?new BroadcastChannel("cattyos_presence"):null;
+const thisTab=Math.random().toString(36).slice(2), activeTabs=new Set([thisTab]);
+function updatePresence(){$("onlineCount").textContent=activeTabs.size}
+if(presence){
+ presence.onmessage=e=>{const m=e.data||{};if(m.type==="hello"||m.type==="ping"){const unseen=!activeTabs.has(m.id);activeTabs.add(m.id);if(unseen)presence.postMessage({type:"hello",id:thisTab})}else if(m.type==="bye"){activeTabs.delete(m.id)}updatePresence()};
+ presence.postMessage({type:"hello",id:thisTab});
+ const pingTimer=setInterval(()=>presence.postMessage({type:"ping",id:thisTab}),4000);
+ window.addEventListener("beforeunload",()=>{presence.postMessage({type:"bye",id:thisTab});clearInterval(pingTimer)});
+}
+updatePresence();
+
+// Built-in focus timer.
+let focusSeconds=1500,focusTimer=null;
+function paintFocus(){ $("focusTime").textContent=String(Math.floor(focusSeconds/60)).padStart(2,"0")+":"+String(focusSeconds%60).padStart(2,"0") }
+$("focusStart").addEventListener("click",()=>{
+ if(focusTimer){clearInterval(focusTimer);focusTimer=null;$("focusStart").textContent="Resume";return}
+ if(focusSeconds<=0)focusSeconds=1500;
+ $("focusStart").textContent="Pause";
+ focusTimer=setInterval(()=>{focusSeconds--;paintFocus();if(focusSeconds<=0){clearInterval(focusTimer);focusTimer=null;$("focusStart").textContent="Start again";alert("Focus session complete. Great work!")}},1000);
+});
+$("focusReset").addEventListener("click",()=>{clearInterval(focusTimer);focusTimer=null;focusSeconds=1500;paintFocus();$("focusStart").textContent="Start focus"});
+const dailyQuotes=["Small steps still move you forward.","You do not have to know everything to begin.","Progress is built one question at a time.","Curiosity is a superpower. Keep using it.","Your effort today is an investment in tomorrow.","Take a breath. Pick one thing. Begin."];
+$("dailyQuote").textContent=dailyQuotes[Math.floor(Date.now()/86400000)%dailyQuotes.length];
+
+showNameGate();
+</script>
+
+<script>
+(()=>{
+'use strict';
+const el=id=>document.getElementById(id), esc=escapeHtml;
+const storageKey='catty_study_v2';
+let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){}
+const mk=(id,title,tag,desc,rows)=>({id,title,tag,desc,cards:rows.map((r,i)=>({id:id+'_'+i,q:r[0],a:r[1],why:r[2]}))});
+const samples=[
+mk('number','Number sense','MATH','Build confidence with operations, fractions, and place value.',[
+['What is 7 × 8?','56','Seven groups of eight make 56. You can also find 7 × 4 = 28 and double it.'],
+['What is 3/4 written as a decimal?','0.75','Divide 3 by 4. Three quarters are the same as 75 hundredths.'],
+['What is 25% of 80?','20','25% is one quarter. Divide 80 by 4 to get 20.'],
+['What is the value of the 6 in 462?','60','The 6 is in the tens place, so it represents six tens.'],
+['What is 18 ÷ 3 + 2?','8','Perform division before addition: 18 ÷ 3 = 6, then 6 + 2 = 8.'],
+['What is the perimeter of a rectangle with sides 5 cm and 3 cm?','16 cm','Add all four sides: 5 + 3 + 5 + 3 = 16 cm. Perimeter measures the distance around a shape.']]),
+mk('algebra','Algebra essentials','MATH','Work through equations, expressions, and coordinate pairs.',[
+['Solve x + 7 = 12. What is x?','5','Subtract 7 from both sides to keep the equation balanced.'],
+['Solve 3x = 21. What is x?','7','Divide both sides by 3. Substituting 7 gives 3 × 7 = 21.'],
+['Simplify 2x + 5x.','7x','The terms have the same variable part, so add their coefficients: 2 + 5 = 7.'],
+['Evaluate 2x + 1 when x = 4.','9','Replace x with 4, then multiply before adding: 2 × 4 + 1 = 9.'],
+['Solve 2x − 4 = 10. What is x?','7','Add 4 to both sides to get 2x = 14, then divide both sides by 2.'],
+['For y = 2x, what is y when x = 3?','6','Substitute x = 3: y = 2 × 3 = 6. The point (3, 6) lies on this line.']]),
+mk('language','Grammar toolkit','LANGUAGE','Recognize the building blocks of a sentence.',[
+['Which part of speech names a person, place, thing, or idea?','Noun','Examples include teacher, city, pencil, and happiness. A noun can name something concrete or abstract.'],
+['Which part of speech typically expresses an action or state of being?','Verb','Run and write express actions. Is and seem can express states of being.'],
+['Which part of speech modifies a noun or pronoun?','Adjective','In “the blue notebook,” blue describes notebook.'],
+['Which part of speech can modify a verb, adjective, or another adverb?','Adverb','In “she reads quietly,” quietly tells how she reads.'],
+['Which part of speech can replace a noun phrase?','Pronoun','In “Mia arrived. She waved,” she refers to Mia without repeating the name.'],
+['Which part of speech joins words, phrases, or clauses?','Conjunction','And, but, and or are coordinating conjunctions. They connect parts of a sentence.']]),
+mk('geometry','Geometry basics','MATH','Connect shapes, measurements, and formulas.',[
+['How many sides does a triangle have?','3','A triangle is a polygon with three straight sides and three vertices.'],
+['How many degrees are in a right angle?','90°','A right angle is one quarter of a full 360° turn.'],
+['What is the area of a rectangle that is 6 cm long and 4 cm wide?','24 cm²','Area = length × width = 6 × 4 = 24 square centimeters.'],
+['How many sides does a hexagon have?','6','A hexagon is a six-sided polygon. Its sides do not all have to be equal.'],
+['What is the sum of the interior angles of a triangle in a plane?','180°','In ordinary plane geometry, the three interior angles of a triangle add up to 180°.'],
+['What is the area of a square with side length 5 cm?','25 cm²','A square has equal sides, so its area is side × side: 5 × 5 = 25 square centimeters.']])
+];
+let custom=Array.isArray(saved.custom)?saved.custom:[], results=Array.isArray(saved.results)?saved.results:[], learned=saved.learned||{}, known=saved.known||{};
+let selected=samples[0].id, mode='learn', cardIndex=0, flipped=false, session=null, lastSession=null;
+const decks=()=>[...samples,...custom], deck=()=>decks().find(d=>d.id===selected)||samples[0];
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify({custom,results,learned,known}))}catch(e){toast('Storage is full or unavailable. Export a backup.')}}
+let toastTimer;function toast(text){document.querySelector('.toast')?.remove();const t=document.createElement('div');t.className='toast';t.role='status';t.textContent=text;document.body.append(t);clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.remove(),2600)}
+function go(id){openPage(id);el('crumb').textContent=({studyHub:'Study room',testHub:'Self-tests',studyHistory:'Study progress'})[id]||'CattyOS';if(id==='studyHub')renderStudy();if(id==='testHub')renderSetup();if(id==='studyHistory')renderHistory()}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function renderStudy(){
+ const d=deck();el('deckCount').textContent=decks().length+' sets';
+ el('deckList').innerHTML=decks().map((x,i)=>`<button class="deckbtn ${x.id===d.id?'active':''}" data-deck="${esc(x.id)}"><span class="deck-num">${String(i+1).padStart(2,'0')} / ${esc(x.tag)}</span><b>${esc(x.title)}</b><small>${x.cards.length} cards · ${x.cards.filter(c=>learned[c.id]).length} studied</small></button>`).join('');
+ el('deckList').querySelectorAll('[data-deck]').forEach(b=>b.onclick=()=>{selected=b.dataset.deck;cardIndex=0;flipped=false;mode='learn';renderStudy()});
+ el('studyHeading').innerHTML=`<h2 style="margin:0 0 5px">${esc(d.title)}</h2><p class="muted" style="margin:0 0 17px">${esc(d.desc)}</p>`;
+ ['learn','flash','make'].forEach(m=>{el(m+'Tab').classList.toggle('active',mode===m);el(m+'Tab').setAttribute('aria-selected',mode===m)});
+ if(mode==='learn'){
+ el('studyBody').innerHTML=d.cards.map((c,i)=>`<article class="lessonblock"><div class="eyebrow">SECTION ${String(i+1).padStart(2,'0')}</div><h3>${esc(c.q)}</h3><div class="answer-chip">${esc(c.a)}</div><p>${esc(c.why)}</p><label class="study-check"><input type="checkbox" data-learn="${esc(c.id)}" ${learned[c.id]?'checked':''}> I have studied this section</label></article>`).join('')+`<div class="actions"><button class="primary" id="lessonFlash">Practice with flashcards →</button><button class="secondary" id="lessonTest">Test this set</button></div>`;
+ el('studyBody').querySelectorAll('[data-learn]').forEach(c=>c.onchange=()=>{learned[c.dataset.learn]=c.checked;persist();el('deckList').querySelector('.active small').textContent=d.cards.length+' cards · '+d.cards.filter(x=>learned[x.id]).length+' studied'});
+ el('lessonFlash').onclick=()=>{mode='flash';renderStudy()};el('lessonTest').onclick=()=>go('testHub');
+ }else if(mode==='flash')renderFlash();else renderEditor();
+}
+function renderFlash(){
+ const d=deck(),c=d.cards[cardIndex],count=d.cards.filter(x=>known[x.id]).length;
+ el('studyBody').innerHTML=`<div class="cardbar"><span class="muted">Card ${cardIndex+1} of ${d.cards.length}</span><span class="pill">${count} marked confident</span></div><div class="meter"><span style="width:${(cardIndex+1)/d.cards.length*100}%"></span></div><button class="flashcard ${flipped?'flipped':''}" id="flipCard" aria-label="${flipped?'Show question':'Reveal answer'}"><span class="eyebrow">${flipped?'THE ANSWER':'RECALL BEFORE REVEALING'}</span><span class="fc-text">${esc(flipped?c.a:c.q)}</span>${flipped?'<span class="muted">'+esc(c.why)+'</span>':'<small>Click to flip · or focus this card and press Space</small>'}</button><div class="cardbar"><button class="secondary" id="prevCard">← Previous</button><span class="muted">${known[c.id]?'Marked confident':'Keep practicing'}</span><button class="secondary" id="nextCard">Next →</button></div><div class="actions"><button class="primary" id="knowCard">${known[c.id]?'Unmark confident':'I know this'}</button><button class="secondary" id="againCard">Study again</button><button class="secondary" id="flashTest">Test this set →</button></div><p class="study-note">Confidence is self-reported. A self-test helps check your recall.</p>`;
+ el('flipCard').onclick=()=>{flipped=!flipped;renderFlash();el('flipCard').focus()};
+ el('prevCard').onclick=()=>{cardIndex=(cardIndex-1+d.cards.length)%d.cards.length;flipped=false;renderFlash()};
+ el('nextCard').onclick=()=>{cardIndex=(cardIndex+1)%d.cards.length;flipped=false;renderFlash()};
+ el('knowCard').onclick=()=>{known[c.id]=!known[c.id];persist();renderFlash()};
+ el('againCard').onclick=()=>{known[c.id]=false;persist();cardIndex=(cardIndex+1)%d.cards.length;flipped=false;renderFlash()};el('flashTest').onclick=()=>go('testHub');
+}
+function renderEditor(){
+ el('studyBody').innerHTML=`<form class="panel custom-editor" id="deckForm"><div><div class="eyebrow">MAKE IT YOURS</div><h2 style="margin:0">Turn your notes into a study set.</h2><p class="muted">Add at least four cards with distinct answers to enable multiple-choice self-tests.</p></div><label class="field">Study set name<input id="newDeckTitle" required maxlength="80" placeholder="e.g. Chapter 3 vocabulary"></label><label class="field">Cards<textarea id="newDeckCards" required placeholder="Question | Answer | Explanation\nWhat is 5 + 5? | 10 | Add five and five together."></textarea></label><p class="muted" style="margin:0">One card per line: Question | Answer | Explanation. Explanations are optional. Do not use the | character inside a field.</p><div id="deckError" role="alert" class="muted"></div><div><button class="primary" type="submit">Create study set →</button></div></form>`;
+ el('deckForm').onsubmit=e=>{e.preventDefault();let lines=el('newDeckCards').value.split('\n').filter(x=>x.trim());let id='custom_'+Date.now();let cards=lines.map((line,i)=>{const [q,a,why]=line.split('|').map(x=>x.trim());return{id:id+'_'+i,q,a,why:why||'Review this answer against your class notes.'}});if(cards.length<4||cards.some(c=>!c.q||!c.a)||new Set(cards.map(c=>c.a.toLowerCase())).size<4){el('deckError').textContent='Add at least four valid question | answer lines, with at least four distinct answers.';return}custom.push({id,title:el('newDeckTitle').value.trim()||'My study set',tag:'YOUR SET',desc:'Created from your own notes. Check your questions and answers before studying.',cards});selected=id;mode='learn';cardIndex=0;persist();renderStudy();toast('Your study set is ready.')};
+}
+function renderSetup(){
+ if(session){renderQuestion();return}
+ el('testBody').innerHTML=`<div class="panel" style="max-width:850px"><div class="eyebrow">SET YOUR SESSION</div><h2 style="margin:0">A little challenge. A lot of clarity.</h2><p class="muted">Questions and answer choices are shuffled. Choose practice for feedback after each answer, or test mode for feedback at the end.</p><div class="test-config"><label class="field">Study set<select id="quizDeck">${decks().map(d=>`<option value="${esc(d.id)}" ${d.id===selected?'selected':''}>${esc(d.title)}</option>`).join('')}</select></label><label class="field">Session type<select id="quizMode"><option value="practice">Practice · immediate feedback</option><option value="test">Self-test · feedback at the end</option></select></label><label class="field">Questions<select id="quizCount"><option value="all">All questions in this set</option><option value="4">4 questions</option></select></label></div><div class="notice">Multiple-choice questions use the answers in your selected study set. Your results stay on this device. There is no time limit.</div><button class="primary" id="startQuiz">Start session →</button></div>`;
+ el('startQuiz').onclick=()=>{selected=el('quizDeck').value;startQuiz(deck(),el('quizMode').value,el('quizCount').value)};
+}
+function startQuiz(d,type,count,subset){
+ const cards=shuffle(subset||d.cards).slice(0,count==='all'?d.cards.length:Number(count));
+ session={title:d.title,deckId:d.id,type,index:0,answers:[],choice:null,checked:false,questions:cards.map(c=>{const other=[...new Set(d.cards.map(x=>x.a).filter(a=>a!==c.a))];return {...c,options:shuffle([c.a,...shuffle(other).slice(0,3)])}})};renderQuestion();
+}
+function renderQuestion(){
+ const t=session,c=t.questions[t.index];
+ el('testBody').innerHTML=`<div class="panel" style="max-width:850px"><div class="cardbar" style="margin-top:0"><span class="eyebrow" style="margin:0">${esc(t.title)} / ${t.type==='practice'?'PRACTICE':'SELF-TEST'}</span><button class="secondary" id="quitQuiz">Exit session</button></div><div class="meter"><span style="width:${(t.index)/t.questions.length*100}%"></span></div><p class="muted">Question ${t.index+1} of ${t.questions.length}</p><h2 style="font-size:24px;margin:18px 0 22px">${esc(c.q)}</h2><div role="group" aria-label="Answer choices">${c.options.map((a,i)=>`<button class="quiz-option ${t.choice===a?'selected':''}" data-choice="${i}" aria-pressed="${t.choice===a}" ${t.checked?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(a)}</span></button>`).join('')}</div><div id="quizFeedback" aria-live="polite">${t.checked?feedback(c,t.choice):''}</div><div class="actions" style="margin-top:22px"><button class="primary" id="quizNext" ${t.choice===null?'disabled style="opacity:.5;box-shadow:none"':''}>${t.type==='practice'&&!t.checked?'Check answer':t.index===t.questions.length-1?'Finish & see results':'Next question →'}</button></div></div>`;
+ el('testBody').querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{t.choice=c.options[Number(b.dataset.choice)];renderQuestion();el('quizNext').focus()});
+ el('quitQuiz').onclick=()=>{if(confirm('Exit this session? Your unfinished answers will not be saved.')){session=null;renderSetup()}};
+ el('quizNext').onclick=()=>{if(t.choice===null)return;if(t.type==='practice'&&!t.checked){t.checked=true;renderQuestion();el('quizNext').focus();return}t.answers.push(t.choice);if(t.index<t.questions.length-1){t.index++;t.choice=null;t.checked=false;renderQuestion()}else finishQuiz()};
+}
+function feedback(c,answer){return `<div class="feedback"><h3>${answer===c.a?'Correct. Nice work.':'Not quite. Here is the answer.'}</h3><p>Correct answer: <strong>${esc(c.a)}</strong></p><p>${esc(c.why)}</p></div>`}
+function finishQuiz(){
+ const t=session;const score=t.questions.filter((c,i)=>c.a===t.answers[i]).length;
+ const r={id:Date.now(),date:new Date().toISOString(),title:t.title,deckId:t.deckId,type:t.type,score,total:t.questions.length};results.unshift(r);results=results.slice(0,200);persist();lastSession=t;session=null;renderResults(t,r);
+}
+function renderResults(t,r){
+ const missed=t.questions.filter((c,i)=>c.a!==t.answers[i]);
+ el('testBody').innerHTML=`<div class="panel" style="max-width:850px"><div class="result-top"><div class="eyebrow">SESSION COMPLETE</div><h2 style="margin:0">${missed.length?'Now you know what to work on.':'That is a clean sweep.'}</h2><div class="result-score">${Math.round(r.score/r.total*100)}%</div><p class="muted">${r.score} of ${r.total} correct · ${esc(t.title)} · ${t.type==='practice'?'Practice':'Self-test'}</p><div class="actions" style="justify-content:center"><button class="primary" id="retryQuiz">Try again</button>${missed.length?'<button class="secondary" id="retryMissed">Practice missed questions</button>':''}<button class="secondary" id="resultStudy">Back to study guide</button></div></div><h2 style="font-size:19px">Answer review</h2>${t.questions.map((c,i)=>`<div class="review-item"><div class="statuslabel">${c.a===t.answers[i]?'CORRECT':'REVISIT THIS'}</div><h3>${i+1}. ${esc(c.q)}</h3><p>Your answer: ${esc(t.answers[i])}</p><p>Correct answer: <strong>${esc(c.a)}</strong></p><p class="muted">${esc(c.why)}</p></div>`).join('')}<button class="secondary" id="resultsHistory">View study progress →</button></div>`;
+ el('retryQuiz').onclick=()=>{selected=t.deckId;startQuiz(deck(),t.type,'all')};if(missed.length)el('retryMissed').onclick=()=>{selected=t.deckId;startQuiz(deck(),'practice','all',missed)};el('resultStudy').onclick=()=>{selected=t.deckId;mode='learn';go('studyHub')};el('resultsHistory').onclick=()=>go('studyHistory');
+}
+function renderHistory(){
+ const total=results.reduce((n,r)=>n+r.total,0),correct=results.reduce((n,r)=>n+r.score,0);
+ el('learningStats').innerHTML=[[results.length,'Sessions completed'],[total?Math.round(correct/total*100)+'%':'—','Overall answer accuracy'],[Object.values(learned).filter(Boolean).length,'Sections marked studied'],[Object.values(known).filter(Boolean).length,'Cards marked confident']].map(([v,l])=>`<div class="stat"><strong>${v}</strong><span>${l}</span></div>`).join('');
+ el('testHistory').innerHTML=results.length?results.map(r=>`<div class="history-row"><div><b>${esc(r.title)}</b><small>${new Date(r.date).toLocaleString()} · ${r.type==='practice'?'Practice':'Self-test'}</small></div><span class="pill">${r.score}/${r.total} · ${Math.round(r.score/r.total*100)}%</span></div>`).join(''):'<div class="empty-state">No sessions yet. Complete a self-test to start your learning story.</div>';
+}
+// Dedicated navigation is handled before the original generic navigation handler.
+document.addEventListener('click',e=>{const b=e.target.closest('[data-page],[data-go]');const id=b&&(b.dataset.page||b.dataset.go);if(['studyHub','testHub','studyHistory'].includes(id)){e.preventDefault();e.stopImmediatePropagation();go(id)}},true);
+['learn','flash','make'].forEach(m=>el(m+'Tab').onclick=()=>{mode=m;flipped=false;renderStudy()});
+el('createDeckGo').onclick=()=>{mode='make';renderStudy()};el('studyTestGo').onclick=()=>go('testHub');el('backStudy').onclick=()=>go('studyHub');el('historyTestGo').onclick=()=>go('testHub');
+el('exportStudy').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exported:new Date().toISOString(),custom,results,learned,known},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CattyOS-study-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};
+renderStudy();
+})();
+</script>
+
+</body>
+</html>
